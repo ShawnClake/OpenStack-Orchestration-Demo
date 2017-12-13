@@ -1,0 +1,78 @@
+heat_template_version: 2017-02-24
+
+parameters:
+  key_name:
+    type: string
+    description: Name of a KeyPair
+    default: keypair
+  flavor_name:
+    type: string
+    description: Name of a Flavor
+    default: sktel.small
+  image_name:
+    type: string
+    description: Name of an Image
+    default: cirros
+  vnf_image_name:
+    type: string
+    description: Name of a VNF image
+    default: vyos
+  tenant1_cidr:
+    type: string
+    description: CIDR for Tenant 1
+    default: 172.16.84.0/24
+  tenant2_cidr:
+    type: string
+    description: CIDR for Tenant 2
+    default: 172.16.126.0/24
+
+resources:
+  tenant1:
+    type: http://172.25.181.5/templates/2i_1n.yaml
+    properties:
+      key_name: { get_param: key_name }
+      flavor_name: { get_param: flavor_name }
+      image_name: { get_param: image_name }
+      subnet_cidr: { get_param: tenant1_cidr }
+
+  tenant2:
+    type: http://172.25.181.5/templates/2i_1n.yaml
+    properties:
+      key_name: { get_param: key_name }
+      flavor_name: { get_param: flavor_name }
+      image_name: { get_param: image_name }
+      subnet_cidr: { get_param: tenant2_cidr }
+      
+  tenant1_gateway_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_attr: [tenant1, resource.internal_net] }
+      fixed_ips:
+        - ip_address: { get_attr: [tenant1, resource.internal_subnet, gateway_ip] }
+      port_security_enabled: false
+        
+  tenant2_gateway_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_attr: [tenant2, resource.internal_net] }
+      fixed_ips:
+        - ip_address: { get_attr: [tenant2, resource.internal_subnet, gateway_ip] }
+      port_security_enabled: false
+        
+  provider_port:
+    type: OS::Neutron::Port
+    properties:
+      network: provider_network
+      security_groups:
+        - open
+
+  vnf-server:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      flavor: { get_param: flavor_name }
+      image: { get_param: vnf_image_name }
+      networks: 
+        - port: { get_resource: provider_port }
+        - port: { get_resource: tenant1_gateway_port }
+        - port: { get_resource: tenant2_gateway_port }

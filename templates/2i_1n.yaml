@@ -1,0 +1,52 @@
+heat_template_version: 2017-02-24
+
+parameters:
+  key_name:
+    type: string
+    description: Name of a KeyPair
+  flavor_name:
+    type: string
+    description: Name of a Flavor
+  image_name:
+    type: string
+    description: Name of an Image
+  subnet_cidr:
+    type: string
+    description: CIDR for this network
+
+resources:
+  internal_net:
+    type: OS::Neutron::Net
+
+  internal_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: internal_net }
+      cidr: { get_param: subnet_cidr }
+      ip_version: 4
+
+  server1:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      flavor: { get_param: flavor_name }
+      image: { get_param: image_name }
+      networks:
+        - network: { get_resource: internal_net }
+      security_groups:
+        - open
+
+
+  server2:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      flavor: { get_param: flavor_name }
+      image: { get_param: image_name }
+      networks: 
+        - network: { get_resource: internal_net }
+      security_groups:
+        - open
+
+
+
