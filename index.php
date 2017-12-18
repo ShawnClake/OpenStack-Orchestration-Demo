@@ -55,7 +55,7 @@ date_default_timezone_set("America/Regina");
         <div class="card-body">
           <h4 class="card-title">Service 1 - 4i_2n_1v</h4>
           <p class="card-text">Two networks each containing two instances are connected to a VyOS VNF. The VNF also connects to the provider network to provide external connectivity.</p>
-          <a href="apitest.php?type=1" class="btn btn-primary">Create Stack</a>
+          <a href="demo.php?type=1" class="btn btn-primary">Create Stack</a>
         </div>
       </div>
     
@@ -68,7 +68,7 @@ date_default_timezone_set("America/Regina");
         <div class="card-body">
           <h4 class="card-title">Service 2 - 4i_2n_2v</h4>
           <p class="card-text">Two networks each containing two instances are each connected to a VyOS VNF. Both VyOS VNFs are then connected to an OpenStack router.</p><br>
-          <a href="apitest.php?type=2" class="btn btn-primary">Create Stack</a>
+          <a href="demo.php?type=2" class="btn btn-primary">Create Stack</a>
         </div>
       </div>
 
@@ -81,7 +81,7 @@ date_default_timezone_set("America/Regina");
         <div class="card-body">
           <h4 class="card-title">Service 3 - 2i_1n_1v</h4>
           <p class="card-text">Two instances are connected to a network which resides behind a VyOS VNF. By default, outbound traffic is natted.</p><br>
-          <a href="apitest.php?type=3" class="btn btn-primary">Create Stack</a>
+          <a href="demo.php?type=3" class="btn btn-primary">Create Stack</a>
         </div>
       </div>
 
